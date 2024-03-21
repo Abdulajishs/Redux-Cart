@@ -3,7 +3,7 @@ import classes from './CartButton.module.css';
 import { cartAction } from '../../store/cart-slice';
 
 const CartButton = (props) => {
-  const quantity = useSelector(state=>  state.manage.quantity)
+  const quantity = useSelector(state=>  state.manage.totalQuantity)
   const dispatch = useDispatch()
   const cartHandler = () =>{
     dispatch(cartAction.showCart())

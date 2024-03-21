@@ -4,15 +4,15 @@ import classes from './ProductItem.module.css';
 import { manageAction } from '../../store/manageCart';
 
 const ProductItem = (props) => {
-  const { title, price, description } = props;
+  const { id,title, price, description } = props;
 
   const dispatch = useDispatch();
 
   const addToCartHandler = ()=>{
-    dispatch(manageAction.addItemToCart())
+    dispatch(manageAction.addItemToCart({id,title, price, description,quantity : 1}))
   }
   return (
-    <li className={classes.item}>
+    <li className={classes.item} key={id}>
       <Card>
         <header>
           <h3>{title}</h3>

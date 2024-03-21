@@ -3,22 +3,22 @@ import classes from './CartItem.module.css';
 import { manageAction } from '../../store/manageCart';
 
 const CartItem = (props) => {
-  const { title, quantity, total, price } = props.item;
+  const {id, name, quantity, totalPrice, price } = props.item;
   const dispatch = useDispatch()
-  const decrementHandler = () =>{
+  const addToCart = () =>{
     dispatch(manageAction.addItemToCart())
   }
-  const incrementHandler = () =>{
-    dispatch(manageAction.removeItemToCart())
+  const removeFromCart = () =>{
+    dispatch(manageAction.removeItemFromCart(id))
   }
   return (
     <>
     {quantity >  0 && 
-    <li className={classes.item}>
+    <li className={classes.item} key={id}>
       <header>
-        <h3>{title}</h3>
+        <h3>{name}</h3>
         <div className={classes.price}>
-          ${Number(total).toFixed(2)}{' '}
+          ${Number(totalPrice).toFixed(2)}{' '}
           <span className={classes.itemprice}>(${price.toFixed(2)}/item)</span>
         </div>
       </header>
@@ -27,8 +27,8 @@ const CartItem = (props) => {
           x <span>{quantity}</span>
         </div>
         <div className={classes.actions}>
-          <button  onClick={decrementHandler}>-</button>
-          <button onClick={incrementHandler}>+</button>
+          <button  onClick={removeFromCart}>-</button>
+          <button onClick={addToCart}>+</button>
         </div>
       </div>
     </li>
