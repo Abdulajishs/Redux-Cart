@@ -1,19 +1,23 @@
 import { createSlice } from "@reduxjs/toolkit";
-
+import { cartAction } from "./cart-slice";
 const manageCart = createSlice({
     name: "manageCart",
-    initialState: {
+    initialState : {
         items: [],
         totalQuantity: 0,
     },
     reducers: {
+        replaceCart (state,action) {
+            state.items = action.payload.items
+            state.totalQuantity = action.payload.totalQuantity
+        },
         addItemToCart(state, action) {
             const newItem = action.payload;
             // console.log(newItem);
             const existingItem = state.items.find(item => item.id === newItem.id);
             // console.log(existingItem);
             state.totalQuantity++
-            if (!existingItem ) {
+            if (!existingItem) {
                 state.items.push({
                     id: newItem.id,
                     name: newItem.title,
@@ -42,6 +46,77 @@ const manageCart = createSlice({
         },
     }
 })
+
+export const sendCartData = (cart) => {
+    return async (dispatch) => {
+        dispatch(cartAction.showNotification({
+            status: "pending",
+            title: "Sending...",
+            message: "Sending cart data!"
+        }))
+        const sentRequest = async () => {
+            try {
+                const response = await fetch("https://react-http-4b164-default-rtdb.firebaseio.com/cart.json", {
+                    method: "PUT",
+                    body: JSON.stringify(cart),
+                })
+                if (response.ok) {
+                    dispatch(cartAction.showNotification({
+                        status: "success",
+                        title: "Success!",
+                        message: "Sending cart  data successfully!"
+                    }))
+                } else {
+                    throw new Error("Sending cart  data failed!")
+                }
+            } catch (error) {
+                dispatch(cartAction.showNotification({
+                    status: "error",
+                    title: "Error",
+                    message: "Sending cart  data failed!"
+                }))
+            }
+        }
+        await sentRequest();
+    }
+}
+
+export const retrieveCartData = () => {
+    return async (dispatch) => {
+        dispatch(cartAction.showNotification({
+            status: "pending",
+            title: "Retrieving...",
+            message: "Retrieving cart data!"
+        }))
+        const sentRequest = async () => {
+            try {
+                const response = await fetch("https://react-http-4b164-default-rtdb.firebaseio.com/cart.json")
+                // console.log(response);
+                const data = await response.json();
+                if (response.ok) {
+                    // console.log(data);
+                    dispatch(manageAction.replaceCart(data))
+                    dispatch(cartAction.showNotification({
+                        status: "success",
+                        title: "Success!",
+                        message: "Retrieving cart  data successfully!"
+                    }))
+                }else{
+                    throw new Error("Retrieving cart  data failed!")
+                }
+            } 
+            catch (error) {
+                dispatch(cartAction.showNotification({
+                    status: "error",
+                    title: "Error",
+                    message: "Retrieving cart  data failed!"
+                }))
+            }
+        }
+        await sentRequest();
+    }
+}
+
 export const manageAction = manageCart.actions;
 
 export default manageCart.reducer;
