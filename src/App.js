@@ -4,7 +4,7 @@ import Layout from './components/Layout/Layout';
 import Products from './components/Shop/Products';
 import { Fragment, useEffect } from 'react';
 import Notification from './components/UI/Notification';
-import { retrieveCartData, sendCartData } from './store/manageCart-slice';
+import { fetchCartData, sendCartData } from './store/manageCart-actions';
 
 let isIntial = true;
 
@@ -19,12 +19,13 @@ function App() {
       isIntial = false;
       return
     }
-    dispatch(sendCartData(cart))
-  }
-    , [cart, dispatch])
+    if (cart.changed) {
+      dispatch(sendCartData(cart))
+    }
+  },[cart, dispatch])
 
   useEffect(() => {
-    dispatch(retrieveCartData());
+    dispatch(fetchCartData());
   }, [dispatch])
 
   return (
